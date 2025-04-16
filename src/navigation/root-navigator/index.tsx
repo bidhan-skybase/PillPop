@@ -24,23 +24,23 @@ const RootNavigator = () => {
                     if (route.name === RootRouteName.HOME) {
                         iconName = focused ? 'home' : 'home-outline';
                     } else if (route.name === RootRouteName.REMINDER) {
-                        iconName = focused ? 'alarm' : 'alarm-outline';
+                        iconName = focused ? 'add-circle' : 'add-circle-outline';
                     } else if (route.name === RootRouteName.INVENTORY) {
-                        iconName = focused ? 'list' : 'list-outline';
+                        iconName = focused ? 'egg' : 'egg-outline';
                     }
 
                     return (
                       <Ionicons name={iconName} color={color} size={size} />
                     );
                 },
-                tabBarActiveTintColor: '#4A90E2',
+                tabBarActiveTintColor: '#3C3D37',
                 tabBarInactiveTintColor: 'gray',
                 headerShown: true,
             })}
         >
-            <Tab.Screen name={RootRouteName.HOME} component={HomeScreen}  />
-            <Tab.Screen name={RootRouteName.REMINDER} component={ReminderScreen} />
-            <Tab.Screen name={RootRouteName.INVENTORY} component={InventoryScreen} />
+            <Tab.Screen name={RootRouteName.HOME} component={HomeScreen}  options={{headerShown: false}}/>
+            <Tab.Screen name={RootRouteName.REMINDER} component={ReminderScreen}  options={{headerShown: false}}/>
+            <Tab.Screen name={RootRouteName.INVENTORY} component={InventoryScreen}  options={{headerShown: false}}/>
         </Tab.Navigator>
     );
 };
