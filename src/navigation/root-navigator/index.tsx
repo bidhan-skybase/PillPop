@@ -21,7 +21,6 @@ const RootNavigator = () => {
             screenOptions={({ route }) => ({
                 tabBarIcon: ({ focused, color, size }) => {
                     let iconName;
-
                     if (route.name === RootRouteName.HOME) {
                         iconName = focused ? 'home' : 'home-outline';
                     } else if (route.name === RootRouteName.REMINDER) {
@@ -31,7 +30,7 @@ const RootNavigator = () => {
                     }
 
                     return (
-                      <Ionicons name='heart-outline' color={color} size={size} />
+                      <Ionicons name={iconName} color={color} size={size} />
                     );
                 },
                 tabBarActiveTintColor: '#4A90E2',
@@ -39,7 +38,7 @@ const RootNavigator = () => {
                 headerShown: true,
             })}
         >
-            <Tab.Screen name={RootRouteName.HOME} component={HomeScreen} />
+            <Tab.Screen name={RootRouteName.HOME} component={HomeScreen}  />
             <Tab.Screen name={RootRouteName.REMINDER} component={ReminderScreen} />
             <Tab.Screen name={RootRouteName.INVENTORY} component={InventoryScreen} />
         </Tab.Navigator>
