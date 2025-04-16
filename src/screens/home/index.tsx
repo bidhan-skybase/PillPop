@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, StyleSheet, StatusBar } from 'react-native';
+import { View, StyleSheet, StatusBar } from 'react-native';
+import { Button, Text, ThemeProvider } from '@rneui/themed';
 
 export default function HomeScreen() {
     return (
@@ -7,6 +8,8 @@ export default function HomeScreen() {
             <StatusBar barStyle="dark-content" />
             <Text style={styles.title}>💊 Medicine Reminder App</Text>
             <Text style={styles.subtitle}>Stay healthy, stay on time.</Text>
+                <Text h2>Welcome to My App</Text>
+                <Button title="Click Me" onPress={() =>{}} />
         </View>
     );
 }
