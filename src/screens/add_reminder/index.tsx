@@ -1,11 +1,12 @@
 import React, {useState} from 'react';
 import {View, SafeAreaView, FlatList, TouchableOpacity} from 'react-native';
-import {Text, Input} from '@rneui/themed';
+import {Text, Input, Button} from '@rneui/themed';
 import styles from '../add_reminder/styles.ts';
 import Gap from '../../component/gap.tsx';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import colors from '../../styles/colors.ts';
-import DropdownInput from "../../component/dropdown.tsx";
+import DropdownInput from '../../component/dropdown.tsx';
+import TimePickerInput from '../../component/time_picker.tsx';
 
 export default function ReminderScreen() {
   let medicine = [
@@ -19,8 +20,15 @@ export default function ReminderScreen() {
   ];
 
   let days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-  const [selectedMedicine, setSelectedMedicine] = useState(medicine[0]);
+  let eatingHabit = [
+    'After eating',
+    'While eating',
+    'Before eating',
+    'Not applicable',
+  ];
+  const [selectedMedicine, setSelectedMedicine] = useState('');
   const [selectedDays, setSelectedDay] = useState(['']);
+  const [selectedHabit, setSelectedHabit] = useState('');
   return (
     <SafeAreaView style={styles.safeAreaView}>
       <View style={styles.container}>
@@ -63,16 +71,16 @@ export default function ReminderScreen() {
           />
         </View>
         <Gap size={16} />
-        <View style={{flexDirection: 'row', gap: 0,}}>
-          <View style={{flex: 7,marginTop:4}}>
+        <View style={{flexDirection: 'row', gap: 0}}>
+          <View style={{flex: 7, marginTop: 4}}>
             <Input label="Medicine name" />
           </View>
 
           <View style={{flex: 3}}>
-            <DropdownInput label={"Dosage"}></DropdownInput>
+            <DropdownInput label={'Dosage'}></DropdownInput>
           </View>
         </View>
-        <View style={{height: 100}}>
+        <View style={{height: 80}}>
           <FlatList
             horizontal
             data={days}
@@ -91,9 +99,17 @@ export default function ReminderScreen() {
                     }
                   }}>
                   <View
-                    style={[styles.dayButton,{borderColor: isSelected ? colors.primary : colors.secondary}]}>
+                    style={[
+                      styles.dayButton,
+                      {
+                        borderColor: isSelected
+                          ? colors.primary
+                          : colors.secondary,
+                      },
+                    ]}>
                     <Text
                       style={{
+                        fontWeight: isSelected ? '600' : '400',
                         color: isSelected ? colors.primary : colors.secondary,
                       }}>
                       {item}
@@ -114,6 +130,41 @@ export default function ReminderScreen() {
             }}
           />
         </View>
+        <Input label={'Time'}></Input>
+        <View style={{height: 40}}>
+          <FlatList
+            horizontal
+            data={eatingHabit}
+            keyExtractor={item => item}
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={{paddingHorizontal: 12}}
+            renderItem={({item}) => {
+              const isSelected = item === selectedHabit;
+
+              return (
+                <TouchableOpacity
+                  onPress={() => setSelectedHabit(item)}
+                  style={[
+                    styles.chip,
+                    {
+                      backgroundColor: isSelected ? '#1F2937' : '#ffffff',
+                      borderColor: isSelected ? 'transparent' : '#1F2937',
+                    },
+                  ]}>
+                  <Text
+                    style={[
+                      styles.chipText,
+                      {color: isSelected ? '#ffffff' : '#1F2937'},
+                    ]}>
+                    {item}
+                  </Text>
+                </TouchableOpacity>
+              );
+            }}
+          />
+        </View>
+          <View style={{flex:1}}></View>
+          <Button title={"Save changes"}></Button>
       </View>
     </SafeAreaView>
   );

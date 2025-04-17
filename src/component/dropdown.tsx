@@ -43,6 +43,7 @@ const DropdownInput: React.FC<DropdownInputProps> = ({
         labelStyle={{
           fontSize: 14,
           fontWeight: '400',
+          fontFamily:"Montserrat",
         }}
         value={value}
         inputContainerStyle={styles.optionInputContainer}

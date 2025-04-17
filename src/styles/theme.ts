@@ -26,10 +26,17 @@ const theme = createTheme({
       },
     },
     Input: {
+
+
+      containerStyle:{
+        width:"100%",
+      },
       inputContainerStyle: {
         borderBottomWidth: 0,
+        width:"100%"
       },
       inputStyle: {
+        width:"100%",
         borderWidth: 1,
         borderColor: '#6E6E73',
         borderRadius: 8,
@@ -39,6 +46,7 @@ const theme = createTheme({
       labelStyle: {
         fontSize: 14,
         fontWeight: '400',
+        fontFamily:"Montserrat",
       },
     }
   },
