@@ -9,6 +9,7 @@ import DropdownInput from '../../component/dropdown.tsx';
 import {storeReminder} from '../../helpers/storage_helpers.ts';
 
 import {MedicineEntry} from '../../model/reminder_model.ts';
+import Snackbar from 'react-native-snackbar';
 
 export default function ReminderScreen() {
   let medicine = [
@@ -181,7 +182,7 @@ export default function ReminderScreen() {
         <View style={{flex: 1}}></View>
         <Button
           title={'Save changes'}
-          onPress={() => {
+          onPress={async () => {
             const reminder: MedicineEntry = {
               selectedMedicine,
               medicineName,
@@ -190,8 +191,13 @@ export default function ReminderScreen() {
               time,
               selectedHabit,
             };
+            const result = await storeReminder(reminder);
+            Snackbar.show({
+              text: result.message,
+              duration: Snackbar.LENGTH_SHORT,
+              backgroundColor: result.success ? 'green' : 'red',
 
-            storeReminder(reminder);
+            });
           }}></Button>
       </View>
     </SafeAreaView>

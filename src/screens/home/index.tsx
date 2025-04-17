@@ -2,6 +2,7 @@ import React from 'react';
 import {View, StyleSheet, StatusBar} from 'react-native';
 import {Button, Text} from '@rneui/themed';
 import {getReminder} from '../../helpers/storage_helpers.ts';
+import Snackbar from "react-native-snackbar";
 
 export default function HomeScreen() {
   return (
@@ -13,6 +14,7 @@ export default function HomeScreen() {
       <Button
         title="Click Me"
         onPress={async () => {
+
           console.log('clicked');
           const reminder = await getReminder();
             console.log(reminder?.medicineName)
