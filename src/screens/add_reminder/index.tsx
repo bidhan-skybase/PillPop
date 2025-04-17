@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState,useEffect} from 'react';
 import {View, SafeAreaView, FlatList, TouchableOpacity} from 'react-native';
 import {Text, Input, Button} from '@rneui/themed';
 import styles from '../add_reminder/styles.ts';

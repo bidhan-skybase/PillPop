@@ -2,7 +2,7 @@ import React from 'react';
 import {View, StyleSheet, StatusBar} from 'react-native';
 import {Button, Text} from '@rneui/themed';
 import {getReminder} from '../../helpers/storage_helpers.ts';
-import Snackbar from "react-native-snackbar";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function HomeScreen() {
   return (
@@ -17,9 +17,17 @@ export default function HomeScreen() {
 
           console.log('clicked');
           const reminder = await getReminder();
-            console.log(reminder?.medicineName)
+            console.log(reminder?.length)
         }}
       />
+
+        <Button
+            title="REMOVE"
+            onPress={async () => {
+                const keys = await AsyncStorage.getAllKeys()
+                await AsyncStorage.multiRemove(keys)
+            }}
+        />
     </View>
   );
 }
