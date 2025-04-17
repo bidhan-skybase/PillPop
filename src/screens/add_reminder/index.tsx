@@ -1,31 +1,119 @@
-import React from 'react';
-import { View, Text, StyleSheet, StatusBar } from 'react-native';
+import React, {useState} from 'react';
+import {View, SafeAreaView, FlatList, TouchableOpacity} from 'react-native';
+import {Text, Input} from '@rneui/themed';
+import styles from '../add_reminder/styles.ts';
+import Gap from '../../component/gap.tsx';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import colors from '../../styles/colors.ts';
 
 export default function ReminderScreen() {
-    return (
-        <View style={styles.container}>
-            <StatusBar barStyle="dark-content" />
-            <Text style={styles.title}>💊 Medicine Reminder App</Text>
-            <Text style={styles.subtitle}>Stay healthy, stay on time.</Text>
+  let medicine = [
+    'Pills',
+    'Syrups',
+    'Injectible',
+    'Inhalers',
+    'Drops',
+    'Ointments',
+    'Suppliments',
+  ];
+
+  let days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const [selectedMedicine, setSelectedMedicine] = useState(medicine[0]);
+  const [selectedDays, setSelectedDay] = useState(['']);
+  return (
+    <SafeAreaView style={styles.safeAreaView}>
+      <View style={styles.container}>
+        <Text h4>Schedule your medicine</Text>
+        <Gap size={12} />
+        <Text style={{fontSize: 14, color: '#6E6E73'}}>
+          Choose the type of medicine
+        </Text>
+        <Gap size={32} />
+        <View style={{height: 40}}>
+          <FlatList
+            horizontal
+            data={medicine}
+            keyExtractor={item => item}
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={{paddingHorizontal: 12}}
+            renderItem={({item}) => {
+              const isSelected = item === selectedMedicine;
+
+              return (
+                <TouchableOpacity
+                  onPress={() => setSelectedMedicine(item)}
+                  style={[
+                    styles.chip,
+                    {
+                      backgroundColor: isSelected ? '#1F2937' : '#ffffff',
+                      borderColor: isSelected ? 'transparent' : '#1F2937',
+                    },
+                  ]}>
+                  <Text
+                    style={[
+                      styles.chipText,
+                      {color: isSelected ? '#ffffff' : '#1F2937'},
+                    ]}>
+                    {item}
+                  </Text>
+                </TouchableOpacity>
+              );
+            }}
+          />
         </View>
-    );
+        <Gap size={16} />
+        <View style={{flexDirection: 'row', gap: 0}}>
+          <View style={{flex: 7}}>
+            <Input label="Medicine name" />
+          </View>
+
+          <View style={{flex: 3}}>
+            <Input label="Dosage" />
+          </View>
+        </View>
+        <View style={{height: 100}}>
+          <FlatList
+            horizontal
+            data={days}
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={{paddingHorizontal: 12}}
+            keyExtractor={item => item}
+            renderItem={({item}) => {
+              const isSelected = selectedDays.includes(item);
+              return (
+                <TouchableOpacity
+                  onPress={() => {
+                    if (isSelected) {
+                      setSelectedDay(selectedDays.filter(day => day !== item));
+                    } else {
+                      setSelectedDay([...selectedDays, item]);
+                    }
+                  }}>
+                  <View
+                    style={[styles.dayButton,{borderColor: isSelected ? colors.primary : colors.secondary}]}>
+                    <Text
+                      style={{
+                        color: isSelected ? colors.primary : colors.secondary,
+                      }}>
+                      {item}
+                    </Text>
+                    <Gap size={8} />
+                    <Ionicons
+                      name={
+                        isSelected
+                          ? 'checkmark-circle'
+                          : 'checkmark-circle-outline'
+                      }
+                      color={isSelected ? colors.primary : colors.secondary}
+                      size={18}
+                    />
+                  </View>
+                </TouchableOpacity>
+              );
+            }}
+          />
+        </View>
+      </View>
+    </SafeAreaView>
+  );
 }
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#f5f7fa',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: 20,
-    },
-    title: {
-        fontSize: 24,
-        fontWeight: '600',
-        color: '#333',
-        marginBottom: 10,
-    },
-    subtitle: {
-        fontSize: 16,
-        color: '#666',
-    },
-});

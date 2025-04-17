@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, StyleSheet, StatusBar } from 'react-native';
-import { Button, Text, ThemeProvider } from '@rneui/themed';
+import { Button, Text } from '@rneui/themed';
 
 export default function HomeScreen() {
     return (
