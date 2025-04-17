@@ -5,6 +5,7 @@ import styles from '../add_reminder/styles.ts';
 import Gap from '../../component/gap.tsx';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import colors from '../../styles/colors.ts';
+import DropdownInput from "../../component/dropdown.tsx";
 
 export default function ReminderScreen() {
   let medicine = [
@@ -62,13 +63,13 @@ export default function ReminderScreen() {
           />
         </View>
         <Gap size={16} />
-        <View style={{flexDirection: 'row', gap: 0}}>
-          <View style={{flex: 7}}>
+        <View style={{flexDirection: 'row', gap: 0,}}>
+          <View style={{flex: 7,marginTop:4}}>
             <Input label="Medicine name" />
           </View>
 
           <View style={{flex: 3}}>
-            <Input label="Dosage" />
+            <DropdownInput label={"Dosage"}></DropdownInput>
           </View>
         </View>
         <View style={{height: 100}}>
