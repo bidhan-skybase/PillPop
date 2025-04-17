@@ -38,7 +38,7 @@ const RootNavigator = () => {
                 headerShown: true,
             })}
         >
-            <Tab.Screen name={RootRouteName.HOME} component={HomeScreen}  options={{headerShown: false}}/>
+            <Tab.Screen name={RootRouteName.HOME} component={HomeScreen}  options={{headerShown: false} }/>
             <Tab.Screen name={RootRouteName.REMINDER} component={ReminderScreen}  options={{headerShown: false}}/>
             <Tab.Screen name={RootRouteName.INVENTORY} component={InventoryScreen}  options={{headerShown: false}}/>
         </Tab.Navigator>

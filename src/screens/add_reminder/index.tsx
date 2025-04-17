@@ -6,7 +6,9 @@ import Gap from '../../component/gap.tsx';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import colors from '../../styles/colors.ts';
 import DropdownInput from '../../component/dropdown.tsx';
-import TimePickerInput from '../../component/time_picker.tsx';
+import {storeReminder} from '../../helpers/storage_helpers.ts';
+
+import {MedicineEntry} from '../../model/reminder_model.ts';
 
 export default function ReminderScreen() {
   let medicine = [
@@ -27,8 +29,12 @@ export default function ReminderScreen() {
     'Not applicable',
   ];
   const [selectedMedicine, setSelectedMedicine] = useState('');
-  const [selectedDays, setSelectedDay] = useState(['']);
+  const [selectedDays, setSelectedDay] = useState<string[]>([]);
   const [selectedHabit, setSelectedHabit] = useState('');
+  const [medicineName, setMedicineName] = useState('');
+  const [dosage, setDosage] = useState('');
+  const [time, setTime] = useState('');
+
   return (
     <SafeAreaView style={styles.safeAreaView}>
       <View style={styles.container}>
@@ -73,11 +79,17 @@ export default function ReminderScreen() {
         <Gap size={16} />
         <View style={{flexDirection: 'row', gap: 0}}>
           <View style={{flex: 7, marginTop: 4}}>
-            <Input label="Medicine name" />
+            <Input
+              value={medicineName}
+              onChangeText={(m: string) => setMedicineName(m)}
+              label="Medicine name"
+            />
           </View>
 
           <View style={{flex: 3}}>
-            <DropdownInput label={'Dosage'}></DropdownInput>
+            <DropdownInput
+              label={'Dosage'}
+              onValueChange={(d: string) => setDosage(d)}></DropdownInput>
           </View>
         </View>
         <View style={{height: 80}}>
@@ -130,7 +142,10 @@ export default function ReminderScreen() {
             }}
           />
         </View>
-        <Input label={'Time'}></Input>
+        <Input
+          label={'Time'}
+          value={time}
+          onChangeText={(t: string) => setTime(t)}></Input>
         <View style={{height: 40}}>
           <FlatList
             horizontal
@@ -163,8 +178,21 @@ export default function ReminderScreen() {
             }}
           />
         </View>
-          <View style={{flex:1}}></View>
-          <Button title={"Save changes"}></Button>
+        <View style={{flex: 1}}></View>
+        <Button
+          title={'Save changes'}
+          onPress={() => {
+            const reminder: MedicineEntry = {
+              selectedMedicine,
+              medicineName,
+              dosage,
+              selectedDays,
+              time,
+              selectedHabit,
+            };
+
+            storeReminder(reminder);
+          }}></Button>
       </View>
     </SafeAreaView>
   );
