@@ -2,7 +2,7 @@ import React from 'react';
 import {View, StyleSheet, StatusBar} from 'react-native';
 import {Button, Text} from '@rneui/themed';
 import {getReminder} from '../../helpers/storage_helpers.ts';
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function HomeScreen() {
   return (
@@ -14,20 +14,32 @@ export default function HomeScreen() {
       <Button
         title="Click Me"
         onPress={async () => {
-
           console.log('clicked');
           const reminder = await getReminder();
-            console.log(reminder?.length)
+          console.log(reminder?.length);
         }}
       />
 
-        <Button
-            title="REMOVE"
-            onPress={async () => {
-                const keys = await AsyncStorage.getAllKeys()
-                await AsyncStorage.multiRemove(keys)
-            }}
-        />
+      <Button
+        title="REMOVE"
+        onPress={async () => {
+          const keys = await AsyncStorage.getAllKeys();
+          await AsyncStorage.multiRemove(keys);
+        }}
+      />
+      <Button
+        title="VIEW ALL"
+        onPress={async () => {
+            try {
+                const keys = await AsyncStorage.getAllKeys();
+                const items = await AsyncStorage.multiGet(keys);
+                console.log('AsyncStorage Items:', items);
+            } catch (error) {
+                console.error('Error getting AsyncStorage items:', error);
+            }
+
+        }}
+      />
     </View>
   );
 }

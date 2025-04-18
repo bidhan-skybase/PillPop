@@ -30,7 +30,11 @@ const RootNavigator = () => {
                     }
 
                     return (
-                      <Ionicons name={iconName} color={color} size={size} />
+                        <Ionicons
+                            name={iconName ?? 'alert-circle-outline'} // default icon if undefined
+                            color={color ?? 'black'} // default color
+                            size={size ?? 24} // default size
+                        />
                     );
                 },
                 tabBarActiveTintColor: '#3C3D37',

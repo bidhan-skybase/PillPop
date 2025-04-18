@@ -1,4 +1,4 @@
-import React, {useState,useEffect} from 'react';
+import React, {useState} from 'react';
 import {View, SafeAreaView, FlatList, TouchableOpacity} from 'react-native';
 import {Text, Input, Button} from '@rneui/themed';
 import styles from '../add_reminder/styles.ts';
@@ -6,10 +6,10 @@ import Gap from '../../component/gap.tsx';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import colors from '../../styles/colors.ts';
 import DropdownInput from '../../component/dropdown.tsx';
-import {storeReminder} from '../../helpers/storage_helpers.ts';
 
 import {MedicineEntry} from '../../model/reminder_model.ts';
-import Snackbar from 'react-native-snackbar';
+import {useDispatch,} from "react-redux";
+import {addReminderStart, resetReminderState} from "../../redux/reminder_slice.ts";
 
 export default function ReminderScreen() {
   let medicine = [
@@ -35,6 +35,7 @@ export default function ReminderScreen() {
   const [medicineName, setMedicineName] = useState('');
   const [dosage, setDosage] = useState('');
   const [time, setTime] = useState('');
+    const dispatch = useDispatch();
 
   return (
     <SafeAreaView style={styles.safeAreaView}>
@@ -191,13 +192,14 @@ export default function ReminderScreen() {
               time,
               selectedHabit,
             };
-            const result = await storeReminder(reminder);
-            Snackbar.show({
-              text: result.message,
-              duration: Snackbar.LENGTH_SHORT,
-              backgroundColor: result.success ? 'green' : 'red',
-
-            });
+            dispatch(addReminderStart(reminder));
+              setSelectedMedicine('');
+              setMedicineName('');
+              setDosage('');
+              setSelectedDay([]);
+              setTime('');
+              setSelectedHabit('');
+              setTimeout(() => dispatch(resetReminderState()), 3000);
           }}></Button>
       </View>
     </SafeAreaView>
