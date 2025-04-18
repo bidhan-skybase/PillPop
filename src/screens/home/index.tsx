@@ -1,64 +1,41 @@
-import React from 'react';
-import {View, StyleSheet, StatusBar} from 'react-native';
-import {Button, Text} from '@rneui/themed';
+import React, {useEffect, useState} from 'react';
+import {FlatList, SafeAreaView, View} from 'react-native';
+import {MedicineEntry} from '../../model/reminder_model.ts';
 import {getReminder} from '../../helpers/storage_helpers.ts';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import styles from './styles.ts';
+import Gap from '../../component/gap.tsx';
+import {Text} from '@rneui/themed';
+import MedicineCard from '../../component/medicine_card';
 
 export default function HomeScreen() {
+  const [reminders, setReminders] = useState<MedicineEntry[]>([]);
+
+  useEffect(() => {
+    const fetchReminders = async () => {
+      const reminders = await getReminder(); // assuming this returns a Promise
+      setReminders(reminders);
+    };
+
+    fetchReminders();
+  }, []);
+  console.log(reminders.length);
   return (
-    <View style={styles.container}>
-      <StatusBar barStyle="dark-content" />
-      <Text style={styles.title}>💊 Medicine Reminder App</Text>
-      <Text style={styles.subtitle}>Stay healthy, stay on time.</Text>
-      <Text h2>Welcome to My App</Text>
-      <Button
-        title="Click Me"
-        onPress={async () => {
-          console.log('clicked');
-          const reminder = await getReminder();
-          console.log(reminder?.length);
-        }}
-      />
-
-      <Button
-        title="REMOVE"
-        onPress={async () => {
-          const keys = await AsyncStorage.getAllKeys();
-          await AsyncStorage.multiRemove(keys);
-        }}
-      />
-      <Button
-        title="VIEW ALL"
-        onPress={async () => {
-            try {
-                const keys = await AsyncStorage.getAllKeys();
-                const items = await AsyncStorage.multiGet(keys);
-                console.log('AsyncStorage Items:', items);
-            } catch (error) {
-                console.error('Error getting AsyncStorage items:', error);
-            }
-
-        }}
-      />
-    </View>
+    <SafeAreaView style={styles.safeAreaView}>
+      <View style={styles.container}>
+        <Text h4>Welcome Back!</Text>
+        <Gap size={12} />
+        <Text style={{fontSize: 14, color: '#6E6E73'}}>
+          Your reminders.Make sure you take your medications on time.
+        </Text>
+        <Gap size={32} />
+        <FlatList
+          data={reminders}
+          keyExtractor={(item, index) => index.toString()} // optional but recommended
+          renderItem={({item}) => {
+            return <MedicineCard props={item} />;
+          }}
+        />
+      </View>
+    </SafeAreaView>
   );
 }
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f5f7fa',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: 10,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#666',
-  },
-});

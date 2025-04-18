@@ -11,8 +11,6 @@ const styles = StyleSheet.create({
         alignItems: 'flex-start',
         justifyContent: 'flex-start',
     },
-
-
 })
 
 export default styles
