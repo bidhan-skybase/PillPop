@@ -28,6 +28,7 @@ jobs:
         run: |
           brew tap wix/brew
           brew install applesimutils
+          xcrun simctl list devices
 
       - name: Install CocoaPods
         run: |
