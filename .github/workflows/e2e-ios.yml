@@ -1,0 +1,67 @@
+name: E2E iOS Tests
+
+on:
+  workflow_call:
+
+
+jobs:
+  e2e-ios:
+    runs-on: macos-latest
+    steps:
+      # Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Set up Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20' # Adjust to your project's Node version
+          cache: 'yarn' # Use 'npm' if you use npm
+
+      # Install Yarn dependencies
+      - name: Install Yarn dependencies
+        run: yarn install --frozen-lockfile
+
+      # Set up Xcode (optional, specify version if needed)
+      - name: Select Xcode version
+        run: sudo xcode-select -s /Applications/Xcode_16.0.app # Adjust Xcode version as needed
+
+      # Install applesimutils (required for Detox to interact with iOS simulator)
+      - name: Install applesimutils
+        run: |
+          brew tap wix/brew
+          brew install applesimutils
+
+      # Install CocoaPods dependencies
+      - name: Install CocoaPods
+        run: |
+          cd ios
+          pod install
+          cd ..
+
+      # Cache Detox build (optional, speeds up subsequent runs)
+      - name: Cache Detox build
+        id: cache-detox-build
+        uses: actions/cache@v4
+        with:
+          path: ios/build
+          key: ${{ runner.os }}-detox-build-${{ hashFiles('ios/**/*') }}
+          restore-keys: |
+            ${{ runner.os }}-detox-build-
+
+      # Build the iOS app for Detox
+      - name: Detox build
+        run: yarn detox build --configuration ios.sim.debug
+
+      # Run Detox tests
+      - name: Detox test
+        run: yarn detox test --configuration ios.sim.debug e2e/continueButton.test.js --cleanup --headless --record-logs all
+
+      # Upload artifacts on failure (optional, for debugging)
+      - name: Upload artifacts
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: detox-artifacts
+          path: artifacts/
