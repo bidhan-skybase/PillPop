@@ -13,13 +13,15 @@ jobs:
         with:
           fetch-depth: 1
 
+          
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22.2.0
+          node-version: '20'
+          cache: 'yarn'
 
-      - name: Install Dependencies
-        run: npm install
+      - name: Install Yarn dependencies
+        run: yarn install --frozen-lockfile
 
       - name: Install CocoaPods Dependencies
         run: cd ios && pod install
