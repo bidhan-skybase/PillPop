@@ -1,7 +1,7 @@
 name: E2E iOS Tests
 
 on:
-  workflow_call:
+  workflow_dispatch:
 
 
 jobs:
