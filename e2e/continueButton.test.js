@@ -4,7 +4,7 @@ describe('Button Press Test', () => {
     });
 
     beforeEach(async () => {
-        await device.reloadReactNative();
+        // await device.reloadReactNative();
     });
 
     it('should find and tap the Continue button', async () => {
