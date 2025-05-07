@@ -13,12 +13,12 @@ module.exports = {
     'ios.debug': {
       type: 'ios.app',
       binaryPath: 'ios/build/Build/Products/Debug-iphonesimulator/PillPop.app',
-      build: 'xcodebuild -workspace ios/PillPop.xcworkspace -scheme PillPop -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build'
+      build: 'yarn react-native bundle --platform ios --dev true --entry-file index.js --bundle-output ios/main.jsbundle --assets-dest ios && xcodebuild -workspace ios/PillPop.xcworkspace -scheme PillPop -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build'
     },
     'ios.release': {
       type: 'ios.app',
       binaryPath: 'ios/build/Build/Products/Release-iphonesimulator/PillPop.app',
-      build: 'xcodebuild -workspace ios/PillPop.xcworkspace -scheme PillPop -configuration Release -sdk iphonesimulator -derivedDataPath ios/build'
+      build: 'yarn react-native bundle --platform ios --dev false --entry-file index.js --bundle-output ios/main.jsbundle --assets-dest ios && xcodebuild -workspace ios/PillPop.xcworkspace -scheme PillPop -configuration Release -sdk iphonesimulator -derivedDataPath ios/build'
     },
     'android.debug': {
       type: 'android.apk',
