@@ -4,9 +4,19 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'ios/**'
+      - 'e2e/**'
+      - 'package.json'
+      - 'yarn.lock'
   pull_request:
     branches:
       - main
+    paths:
+      - 'ios/**'
+      - 'e2e/**'
+      - 'package.json'
+      - 'yarn.lock'
 
 jobs:
   e2e-ios:
@@ -28,7 +38,15 @@ jobs:
         run: |
           brew tap wix/brew
           brew install applesimutils
-          xcrun simctl list devices
+
+      - name: Cache CocoaPods
+        id: cache-pods
+        uses: actions/cache@v4
+        with:
+          path: ios/Pods
+          key: ${{ runner.os }}-pods-${{ hashFiles('ios/Podfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pods-
 
       - name: Install CocoaPods
         run: |
@@ -36,20 +54,41 @@ jobs:
           pod install
           cd ..
 
-      - name: Cache Detox build
-        id: cache-detox-build
-        uses: actions/cache@v4
+      - name: Debug changed files
+        run: git diff --name-only HEAD^ HEAD ios/ || true
+
+      - name: Restore Detox build cache
+        id: cache-detox-build-restore
+        uses: actions/cache/restore@v4
         with:
           path: ios/build
-          key: ${{ runner.os }}-detox-build-${{ hashFiles('ios/**/*') }}
+          key: ${{ runner.os }}-detox-build-${{ hashFiles('ios/Podfile.lock', 'ios/PillPop.xcworkspace/contents.xcworkspacedata', 'ios/PillPop.xcodeproj/project.pbxproj') }}
           restore-keys: |
             ${{ runner.os }}-detox-build-
 
       - name: Detox build
-        run: yarn detox build --configuration ios.sim.debug
+        if: steps.cache-detox-build-restore.outputs.cache-hit != 'true'
+        run: yarn detox build --configuration ios.sim.debug --loglevel verbose
+
+      - name: Debug build output
+        run: ls -R ios/build/Build/Products/Debug-iphonesimulator/ || true
+
+      - name: Save Detox build cache
+        uses: actions/cache/save@v4
+        if: always()
+        with:
+          path: ios/build
+          key: ${{ runner.os }}-detox-build-${{ hashFiles('ios/Podfile.lock', 'ios/PillPop.xcworkspace/contents.xcworkspacedata', 'ios/PillPop.xcodeproj/project.pbxproj') }}
+
+      - name: Debug simulators
+        run: xcrun simctl list devices
 
       - name: Detox test
-        run: yarn detox test --configuration ios.sim.debug e2e/continueButton.test.js --cleanup --headless --record-logs all
+        run: yarn detox test --configuration ios.sim.debug e2e/continueButton.test.js --cleanup --headless --record-logs all --loglevel verbose
+
+      - name: Debug simulator logs
+        if: failure()
+        run: /usr/bin/xcrun simctl spawn 099E04D9-52BD-48C4-B56C-463E7BE09603 log stream --level debug --style compact --predicate 'process == "PillPop"' || true
 
       - name: Upload artifacts
         if: failure()
