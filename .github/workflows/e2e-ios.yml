@@ -1,22 +1,7 @@
 name: E2E iOS Tests
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'ios/**'
-      - 'e2e/**'
-      - 'package.json'
-      - 'yarn.lock'
-  pull_request:
-    branches:
-      - main
-    paths:
-      - 'ios/**'
-      - 'e2e/**'
-      - 'package.json'
-      - 'yarn.lock'
+  workflow_dispatch:
 
 jobs:
   e2e-ios:
