@@ -41,9 +41,9 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ios/build
-          key: ${{ runner.os }}-detox-build
+          key: ${{ runner.os }}-detox-build-${{ github.sha }}
           restore-keys: |
-            ${{ runner.os }}-detox-build
+            ${{ runner.os }}-detox-build-
 
       - name: Start Metro bundler in background
         run: yarn start &
@@ -51,13 +51,15 @@ jobs:
           CI: true
 
       - name: Wait for Metro to start
-        run: sleep 10
+        run: |
+          timeout 30s bash -c "until curl -s http://localhost:8081/status; do sleep 1; done"
+          echo "Metro is up and running"
 
       - name: Detox build
-        run: yarn detox build --configuration ios.sim.release
+        run: yarn detox build --configuration ios.sim.debug
 
       - name: Run Detox tests
-        run: detox test --configuration ios.sim.debug e2e/continueButton.test.js
+        run: detox test --configuration ios.sim.debug --loglevel verbose e2e/continueButton.test.js
         env:
           CI: true
 
