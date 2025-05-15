@@ -16,16 +16,32 @@ jobs:
           node-version: '18'
           cache: 'yarn'
 
+      - name: Cache Node modules
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-node-modules-
+
       - name: Install dependencies
-        run: yarn install
+        run: yarn install --frozen-lockfile
 
       - name: Install Detox CLI
         run: yarn global add detox-cli
 
+      - name: Cache Pods
+        uses: actions/cache@v3
+        with:
+          path: ios/Pods
+          key: ${{ runner.os }}-pods-${{ hashFiles('ios/Podfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pods-
+
       - name: Install CocoaPods dependencies
         run: |
           cd ios
-          pod install
+          pod install --repo-update
           cd ..
 
       - name: Install AppleSimUtils
@@ -33,20 +49,25 @@ jobs:
           brew tap wix/brew
           brew install applesimutils
 
-      - name: Detox rebuild framework cache
-        run: yarn detox rebuild-framework-cache
-
       - name: Cache Detox build
         id: cache-detox-build
         uses: actions/cache@v3
         with:
           path: ios/build
-          key: ${{ runner.os }}-detox-build-${{ github.sha }}
+          key: ${{ runner.os }}-detox-build-${{ hashFiles('ios/Podfile.lock', 'package.json', 'yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-detox-build-
 
+      - name: Log cache status
+        run: |
+          if [[ "${{ steps.cache-detox-build.outputs.cache-hit }}" == "true" ]]; then
+            echo "Cache hit: Using cached ios/build"
+          else
+            echo "Cache miss: Building ios/build from scratch"
+          fi
+
       - name: Start Metro bundler in background
-        run: yarn start &
+        run: yarn start > metro.log 2>&1 &
         env:
           CI: true
 
@@ -65,10 +86,16 @@ jobs:
           CI: true
 
       - name: Detox build
-        run: yarn detox build --configuration ios.sim.debug
+        run: |
+          echo "Starting detox build at $(date)"
+          yarn detox build --configuration ios.sim.debug
+          echo "Finished detox build at $(date)"
 
       - name: Run Detox tests
-        run: detox test --configuration ios.sim.debug --loglevel verbose e2e/continueButton.test.js
+        run: |
+          echo "Starting detox tests at $(date)"
+          detox test --configuration ios.sim.debug --loglevel verbose e2e/continueButton.test.js
+          echo "Finished detox tests at $(date)"
         env:
           CI: true
 
@@ -77,4 +104,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: detox-artifacts
-          path: artifacts
+          path: |
+            artifacts
+            metro.log
