@@ -33,17 +33,6 @@ jobs:
           brew tap wix/brew
           brew install applesimutils
 
-      - name: Build app for Detox
-        run: detox build --configuration ios.sim.debug
-
-      - name: Start Metro bundler in background
-        run: yarn start &
-        env:
-          CI: true
-
-      - name: Wait for Metro to start
-        run: sleep 10
-
       - name: Detox rebuild framework cache
         run: yarn detox rebuild-framework-cache
 
@@ -55,7 +44,14 @@ jobs:
           key: ${{ runner.os }}-detox-build
           restore-keys: |
             ${{ runner.os }}-detox-build
-            
+
+      - name: Start Metro bundler in background
+        run: yarn start &
+        env:
+          CI: true
+
+      - name: Wait for Metro to start
+        run: sleep 10
 
       - name: Detox build
         run: yarn detox build --configuration ios.sim.release
