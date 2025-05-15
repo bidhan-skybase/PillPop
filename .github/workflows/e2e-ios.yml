@@ -52,8 +52,17 @@ jobs:
 
       - name: Wait for Metro to start
         run: |
-          timeout 30s bash -c "until curl -s http://localhost:8081/status; do sleep 1; done"
-          echo "Metro is up and running"
+          for i in {1..30}; do
+            if curl -s http://localhost:8081/status; then
+              echo "Metro is up and running"
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "Error: Metro failed to start within 30 seconds"
+          exit 1
+        env:
+          CI: true
 
       - name: Detox build
         run: yarn detox build --configuration ios.sim.debug
