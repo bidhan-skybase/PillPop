@@ -10,6 +10,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Select Xcode version
+        run: sudo xcode-select -s /Applications/Xcode_16.1.app
+        env:
+          XCODE_VERSION: 16.1
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
@@ -48,6 +53,21 @@ jobs:
         run: |
           brew tap wix/brew
           brew install applesimutils
+
+      - name: Cache Detox framework
+        id: cache-detox-framework
+        uses: actions/cache@v3
+        with:
+          path: ~/Library/Detox
+          key: ${{ runner.os }}-detox-framework-${{ hashFiles('package.json', 'yarn.lock') }}-${{ env.XCODE_VERSION || 'default' }}
+          restore-keys: |
+            ${{ runner.os }}-detox-framework-
+
+      - name: Clean and rebuild Detox framework cache
+        if: steps.cache-detox-framework.outputs.cache-hit != 'true'
+        run: |
+          yarn detox clean-framework-cache
+          yarn detox build-framework-cache
 
       - name: Cache Detox build
         id: cache-detox-build
@@ -107,3 +127,4 @@ jobs:
           path: |
             artifacts
             metro.log
+            ~/Library/Detox/ios/framework/
