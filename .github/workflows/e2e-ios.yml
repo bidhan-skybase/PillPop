@@ -74,7 +74,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ios/build
-          key: ${{ runner.os }}-detox-build-${{ hashFiles('ios/Podfile.lock', 'package.json', 'yarn.lock') }}
+          key: ${{ runner.os }}-detox-build-${{ hashFiles('ios/Podfile.lock', 'package.json', 'yarn.lock', 'src/**', 'ios/**') }}
           restore-keys: |
             ${{ runner.os }}-detox-build-
 
@@ -85,6 +85,22 @@ jobs:
           else
             echo "Cache miss: Building ios/build from scratch"
           fi
+
+      - name: Verify app binary
+        run: |
+          if [ -d "ios/build/Build/Products/Debug-iphonesimulator/PillPop.app" ]; then
+            echo "PillPop.app found"
+          else
+            echo "PillPop.app missing, running detox build"
+            yarn detox build --configuration ios.sim.debug
+          fi
+
+      - name: Detox build
+        if: steps.cache-detox-build.outputs.cache-hit != 'true'
+        run: |
+          echo "Starting detox build at $(date)"
+          yarn detox build --configuration ios.sim.debug
+          echo "Finished detox build at $(date)"
 
       - name: Start Metro bundler in background
         run: yarn start > metro.log 2>&1 &
@@ -104,12 +120,6 @@ jobs:
           exit 1
         env:
           CI: true
-
-      - name: Detox build
-        run: |
-          echo "Starting detox build at $(date)"
-          yarn detox build --configuration ios.sim.debug
-          echo "Finished detox build at $(date)"
 
       - name: Run Detox tests
         run: |
